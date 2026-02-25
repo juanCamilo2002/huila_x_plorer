@@ -1,7 +1,9 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from core.models import BaseModel
 
-class User(AbstractUser):
+
+class User(AbstractUser, BaseModel):
     username = None
     email = models.EmailField(unique=True)
 
@@ -34,7 +36,6 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email
-    
 
     @property
     def full_name(self):
