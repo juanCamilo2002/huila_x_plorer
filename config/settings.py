@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'apps.users',
     'apps.authentication',
     'apps.categories',
-    'apps.locations'
+    'apps.locations',
+    "apps.routes"
 ]
 
 MIDDLEWARE = [
