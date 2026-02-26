@@ -3,6 +3,7 @@ from django.db import models
 
 from core.models import BaseModel
 from apps.categories.models import Category
+from apps.users.models import User
 
 class TouristSpot(BaseModel):
     name = models.CharField(max_length=255)
@@ -74,3 +75,24 @@ class TouristSpotImage(BaseModel):
     
     def __str__(self):
         return f'{self.spot.name} - Image'
+    
+class Favorite(BaseModel):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='favorites'
+    )
+
+    tourist_spot = models.ForeignKey(
+        TouristSpot,
+        on_delete=models.CASCADE,
+        related_name='favorite_by'
+    )
+
+    class Meta:
+        db_table = 'favorites'
+        unique_together = ('user', 'tourist_spot')
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'{self.user.email} ❤️ {self.tourist_spot.name}'

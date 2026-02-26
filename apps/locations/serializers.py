@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from apps.categories.models import Category
 from apps.categories.serializers import CategorySerializer
-from .models import TouristSpot, TouristSpotImage
+from .models import TouristSpot, TouristSpotImage, Favorite
 
 
 class TouristSpotImageSerializer(serializers.ModelSerializer):
@@ -19,6 +19,8 @@ class TouristSpotSerializer(serializers.ModelSerializer):
         required=False
     )
     images = TouristSpotImageSerializer(many=True, read_only=True)
+
+    is_favorite = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = TouristSpot
@@ -39,6 +41,7 @@ class TouristSpotSerializer(serializers.ModelSerializer):
             "images",
             "average_rating",
             "reviews_count",
+            'is_favorite',
             "created_at",
             "updated_at",
         )
@@ -50,6 +53,7 @@ class TouristSpotSerializer(serializers.ModelSerializer):
             "images",
             "average_rating",
             "reviews_count",
+            'is_favorite',
         )
 
     def _set_categories(self, spot: TouristSpot, category_ids):
@@ -69,3 +73,19 @@ class TouristSpotSerializer(serializers.ModelSerializer):
         spot = super().update(instance, validated_data)
         self._set_categories(spot, category_ids)
         return spot
+
+class FavoriteSerializer(serializers.ModelSerializer):
+    tourist_spot_detail = TouristSpotSerializer(
+        source='tourist_spot',
+        read_only=True
+    )
+
+    class Meta:
+        model = Favorite
+        fields = (
+            'id',
+            'tourist_spot',
+            'tourist_spot_detail',
+            'created_at'
+        )
+        read_only_fields = ('id', 'created_at')

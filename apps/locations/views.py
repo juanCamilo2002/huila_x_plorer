@@ -1,10 +1,11 @@
+from django.db.models import Exists, OuterRef, Value, BooleanField
 from rest_framework import viewsets
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.filters import SearchFilter, OrderingFilter
 
 from core.permissions import IsAdminRole
-from .models import TouristSpot, TouristSpotImage
-from .serializers import TouristSpotSerializer, TouristSpotImageSerializer
+from .models import TouristSpot, TouristSpotImage, Favorite
+from .serializers import TouristSpotSerializer, TouristSpotImageSerializer, FavoriteSerializer
 
 class TouristSpotViewsSet(viewsets.ModelViewSet):
     serializer_class = TouristSpotSerializer
@@ -15,6 +16,13 @@ class TouristSpotViewsSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = TouristSpot.objects.all()
+
+        user = self.request.user
+        if user.is_authenticated:
+            fav_qs = Favorite.objects.filter(user=user, tourist_spot_id=OuterRef('pk'))
+            qs = qs.annotate(is_favorite=Exists(fav_qs))
+        else:
+            qs = qs.annotate(is_favorite=Value(False, output_field=BooleanField()))
 
         city = self.request.query_params.get('city')
         department = self.request.query_params.get('department')
@@ -52,3 +60,13 @@ class TouristSoptImageViewSet(viewsets.ModelViewSet):
         if self.request.method in ("GET", "HEAD", "OPTIONS"):
             return [AllowAny()]
         return [IsAdminRole()]
+
+class FavoriteViewSet(viewsets.ModelViewSet):
+    serializer_class = FavoriteSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Favorite.objects.filter(user=self.request.user)
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
