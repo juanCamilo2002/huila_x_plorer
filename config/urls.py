@@ -27,4 +27,5 @@ urlpatterns = [
     path(API + 'categories/', include('apps.categories.urls')),
     path(API + 'locations/', include('apps.locations.urls')),
     path(API + "routes/", include('apps.routes.urls')),
+    path(API + 'reviews/', include('apps.reviews.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

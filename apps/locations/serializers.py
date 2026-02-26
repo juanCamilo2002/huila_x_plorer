@@ -37,10 +37,20 @@ class TouristSpotSerializer(serializers.ModelSerializer):
             "categories",
             "category_ids",
             "images",
+            "average_rating",
+            "reviews_count",
             "created_at",
             "updated_at",
         )
-        read_only_fields = ("id", "created_at", "updated_at", "categories", "images")
+        read_only_fields = (
+            "id", 
+            "created_at", 
+            "updated_at", 
+            "categories", 
+            "images",
+            "average_rating",
+            "reviews_count",
+        )
 
     def _set_categories(self, spot: TouristSpot, category_ids):
         if category_ids is None:

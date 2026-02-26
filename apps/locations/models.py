@@ -31,6 +31,14 @@ class TouristSpot(BaseModel):
 
     is_featured = models.BooleanField(default=False)
 
+    average_rating = models.DecimalField(
+        max_digits=3,
+        decimal_places=2,
+        default=0
+    )
+
+    reviews_count = models.PositiveIntegerField(default=0)
+
 
     class Meta:
         db_table = 'tourist_spots'

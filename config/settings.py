@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'apps.authentication',
     'apps.categories',
     'apps.locations',
-    "apps.routes"
+    'apps.routes',
+    'apps.reviews'
 ]
 
 MIDDLEWARE = [
